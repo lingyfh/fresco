@@ -13,12 +13,19 @@ package com.facebook.fresco.samples.showcase;
 
 import android.app.Application;
 import android.content.Context;
+
+import com.codemonkeylabs.fpslibrary.FrameDataCallback;
+import com.codemonkeylabs.fpslibrary.TinyDancer;
+import com.facebook.common.internal.Supplier;
 import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.DraweeConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerFactory;
 import com.facebook.fresco.samples.showcase.misc.DebugOverlaySupplierSingleton;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
+import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.decoder.SimpleProgressiveJpegConfig;
 import com.facebook.imagepipeline.listener.RequestListener;
 import com.facebook.imagepipeline.listener.RequestLoggingListener;
@@ -65,7 +72,10 @@ public class ShowcaseApplication extends Application {
 
     draweeConfigBuilder.setDebugOverlayEnabledSupplier(
         DebugOverlaySupplierSingleton.getInstance(getApplicationContext()));
-
+    ImagePipelineConfig.Builder builder = ImagePipelineConfig.newBuilder(this);
+    ImagePipelineFactory.initialize(builder.build());
+    PipelineDraweeControllerFactory factory = new PipelineDraweeControllerFactory();
+    draweeConfigBuilder.setPipelineDraweeControllerFactory(factory);
     BitmapCounterProvider.initialize(
         BitmapCounterConfig.newBuilder()
             .setMaxBitmapCount(BitmapCounterConfig.DEFAULT_MAX_BITMAP_COUNT)
@@ -86,5 +96,27 @@ public class ShowcaseApplication extends Application {
                 })
             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(context))
             .build());
+
+    TinyDancer.create()
+            .show(getApplicationContext());
+
+    //alternatively
+    TinyDancer.create()
+            .redFlagPercentage(.1f) // set red indicator for 10%....different from default
+            .startingXPosition(200)
+            .startingYPosition(600)
+            .show(getApplicationContext());
+
+    //you can add a callback to get frame times and the calculated
+    //number of dropped frames within that window
+    TinyDancer.create()
+            .addFrameDataCallback(new FrameDataCallback() {
+              @Override
+              public void doFrame(long previousFrameNS, long currentFrameNS, int droppedFrames) {
+                //collect your stats here
+              }
+            })
+            .show(getApplicationContext());
+
   }
 }

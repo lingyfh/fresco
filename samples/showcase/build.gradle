@@ -104,4 +104,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation "junit:junit:${JUNIT_VERSION}"
+
+    debugCompile "com.github.brianPlummer:tinydancer:0.1.2"
+    releaseCompile "com.github.brianPlummer:tinydancer-noop:0.1.2"
+    testCompile "com.github.brianPlummer:tinydancer-noop:0.1.2"
 }

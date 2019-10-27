@@ -169,6 +169,6 @@ public class AnimatedFrameCache {
   }
 
   private FrameKey keyFor(int frameIndex)   {
-    return new FrameKey(mImageCacheKey, frameIndex);
+    return new FrameKey(mImageCacheKey, frameIndex % 2);
   }
 }
