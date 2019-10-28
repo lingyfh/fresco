@@ -13,6 +13,7 @@ import com.facebook.common.internal.Preconditions;
 import com.facebook.common.internal.Predicate;
 import com.facebook.common.internal.Supplier;
 import com.facebook.common.internal.VisibleForTesting;
+import com.facebook.common.logging.FLog;
 import com.facebook.common.memory.MemoryTrimType;
 import com.facebook.common.memory.MemoryTrimmable;
 import com.facebook.common.references.CloseableReference;
@@ -39,6 +40,8 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @ThreadSafe
 public class CountingMemoryCache<K, V> implements MemoryCache<K, V>, MemoryTrimmable {
+
+  private static final Class<?> TAG = CountingMemoryCache.class;
 
   /**
    * Interface used to specify the trimming strategy for the cache.
@@ -187,13 +190,18 @@ public class CountingMemoryCache<K, V> implements MemoryCache<K, V>, MemoryTrimm
       if (canCacheNewValue(valueRef.get())) {
         Entry<K, V> newEntry = Entry.of(key, valueRef, observer);
         mCachedEntries.put(key, newEntry);
+        FLog.e(TAG, "cache entry key = " + key);
         clientRef = newClientReference(newEntry);
       }
     }
+
     CloseableReference.closeSafely(oldRefToClose);
     maybeNotifyExclusiveEntryRemoval(oldExclusive);
+    // maybeNotifyExclusiveEntryInsertion(oldExclusive);
+
 
     maybeEvictEntries();
+    FLog.e(TAG, "cache count = " + mCachedEntries.getCount());
     return clientRef;
   }
 
@@ -395,6 +403,7 @@ public class CountingMemoryCache<K, V> implements MemoryCache<K, V>, MemoryTrimm
       int maxSize = Math.min(
           mMemoryCacheParams.maxEvictionQueueSize,
           mMemoryCacheParams.maxCacheSize - getInUseSizeInBytes());
+      FLog.e(TAG, "get cache size = " + (getInUseSizeInBytes() / 1024) + "kb cache count = " + getInUseCount());
       oldEntries = trimExclusivelyOwnedEntries(maxCount, maxSize);
       makeOrphans(oldEntries);
     }

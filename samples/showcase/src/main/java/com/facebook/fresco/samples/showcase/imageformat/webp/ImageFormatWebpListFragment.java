@@ -33,14 +33,16 @@ import com.facebook.fresco.samples.showcase.BaseShowcaseFragment;
 import com.facebook.fresco.samples.showcase.R;
 import com.facebook.fresco.samples.showcase.misc.CheckerBoardDrawable;
 import com.facebook.fresco.samples.showcase.misc.ImageUriProvider;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 /**
  * This fragment displays different WebP images.
  *
- * For being able to do this in your applications, you need to add the following dependencies
- * to your build.gradle file (where X.X.X matches the used Fresco version):
- * - implementation 'com.facebook.fresco:animated-webp:X.X.X'
- * - implementation 'com.facebook.fresco:webpsupport:X.X.X'
+ * For being able to do this in your applications, you need to add the following dependencies to
+ * your build.gradle file (where X.X.X matches the used Fresco version): - implementation
+ * 'com.facebook.fresco:animated-webp:X.X.X' - implementation 'com.facebook.fresco:webpsupport:X.X.X'
  */
 public class ImageFormatWebpListFragment extends BaseShowcaseFragment {
 
@@ -55,16 +57,17 @@ public class ImageFormatWebpListFragment extends BaseShowcaseFragment {
 
   @Override
   public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
-    final ImageUriProvider imageUriProvider = ImageUriProvider.getInstance(getContext());
 
     RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+    recyclerView.setItemViewCacheSize(0);
 
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new RecyclerView.Adapter<ItemHolder>() {
       @NonNull
       @Override
       public ItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new ItemHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.webp_animated_recycler_item, viewGroup, false)) {
+        return new ItemHolder(LayoutInflater.from(viewGroup.getContext())
+            .inflate(R.layout.webp_animated_recycler_item, viewGroup, false)) {
         };
       }
 
@@ -97,22 +100,54 @@ public class ImageFormatWebpListFragment extends BaseShowcaseFragment {
       avatar = itemView.findViewById(R.id.avatar);
       tiara = itemView.findViewById(R.id.tiara);
 
+      // avatar.setVisibility(View.GONE);
       tiara.setVisibility(View.GONE);
     }
 
+    public void recycler() {
+
+    }
+
+    private void attachOrDetch(boolean attach) {
+      if (avatar.getController() != null) {
+        if (attach) {
+          avatar.getController().onAttach();
+        } else {
+          avatar.getController().onDetach();
+        }
+      }
+      if (tiara.getController() != null) {
+        if (attach) {
+          tiara.getController().onAttach();
+        } else {
+          tiara.getController().onDetach();
+        }
+      }
+    }
+
     public void setData() {
-      Uri avatarUri = Uri.parse("https://zyvipres.izuiyou.com/avatars/v1/fenghuolun/animation_1571755309217475342.webp");
+      Uri avatarUri = Uri.parse(
+          "https://zyvipres.izuiyou.com/avatars/v1/fenghuolun/animation_1571755309217475342.webp");
+      ImageRequest avatarRequest = ImageRequestBuilder.newBuilderWithSource(avatarUri)
+          .setResizeOptions(new ResizeOptions(150, 150))
+          .build();
       DraweeController avatarController = Fresco.newDraweeControllerBuilder()
-              .setUri(avatarUri)
-              .setAutoPlayAnimations(true)
-              .build();
+          .setUri(avatarUri)
+          .setImageRequest(avatarRequest)
+          .setAutoPlayAnimations(true)
+          .setOldController(avatar.getController())
+          .build();
       avatar.setController(avatarController);
 
-      Uri tiaraUri = Uri.parse("https://zyvipres.izuiyou.com/heads/v1/star/animation_1571390393082421020.webp");
+      Uri tiaraUri = Uri
+          .parse("https://zyvipres.izuiyou.com/heads/v1/star/animation_1571390393082421020.webp");
+      ImageRequest tiaraRequest = ImageRequestBuilder.newBuilderWithSource(tiaraUri)
+          .setResizeOptions(new ResizeOptions(150, 150))
+          .build();
       DraweeController tiaraController = Fresco.newDraweeControllerBuilder()
-              .setUri(tiaraUri)
-              .setAutoPlayAnimations(true)
-              .build();
+          .setImageRequest(tiaraRequest)
+          .setAutoPlayAnimations(true)
+          .build();
       tiara.setController(tiaraController);
     }
   }

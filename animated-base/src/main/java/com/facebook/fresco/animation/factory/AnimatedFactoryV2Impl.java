@@ -109,7 +109,7 @@ public class AnimatedFactoryV2Impl implements AnimatedFactory {
     Supplier<Integer> cachingStrategySupplier = new Supplier<Integer>() {
       @Override
       public Integer get() {
-        return ExperimentalBitmapAnimationDrawableFactory.CACHING_STRATEGY_FRESCO_CACHE_NO_REUSING;
+        return ExperimentalBitmapAnimationDrawableFactory.CACHING_STRATEGY_FRESCO_CACHE;
       }
     };
 

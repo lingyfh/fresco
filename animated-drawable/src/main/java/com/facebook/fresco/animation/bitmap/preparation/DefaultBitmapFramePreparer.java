@@ -7,7 +7,9 @@
 package com.facebook.fresco.animation.bitmap.preparation;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.SparseArray;
+import android.widget.ZoomButtonsController.OnZoomListener;
 import com.facebook.common.logging.FLog;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.fresco.animation.backend.AnimationBackend;
@@ -59,6 +61,7 @@ public class DefaultBitmapFramePreparer
       }
       // Check if already cached.
       if (bitmapFrameCache.contains(frameNumber)) {
+      // if (bitmapFrameCache.contains(frameNumber) && false) {
         FLog.v(TAG, "Frame %d is cached already.", frameNumber);
         return true;
       }
@@ -102,6 +105,7 @@ public class DefaultBitmapFramePreparer
       try {
         // If we have a cached frame already, we don't need to do anything.
         if (mBitmapFrameCache.contains(mFrameNumber)) {
+        // if (mBitmapFrameCache.contains(mFrameNumber) && false) {
           FLog.v(TAG, "Frame %d is cached already.", mFrameNumber);
           return;
         }
@@ -135,6 +139,7 @@ public class DefaultBitmapFramePreparer
                     mAnimationBackend.getIntrinsicWidth(),
                     mAnimationBackend.getIntrinsicHeight());
             nextFrameType = BitmapAnimationBackend.FRAME_TYPE_CREATED;
+            FLog.e(TAG.getSimpleName(), "prepareFrameAndCache: FRAME_TYPE_REUSED");
             break;
 
           case BitmapAnimationBackend.FRAME_TYPE_CREATED:
@@ -150,6 +155,7 @@ public class DefaultBitmapFramePreparer
               FLog.w(TAG, "Failed to create frame bitmap", e);
               return false;
             }
+            FLog.e(TAG.getSimpleName(), "prepareFrameAndCache: FRAME_TYPE_CREATED");
             nextFrameType = BitmapAnimationBackend.FRAME_TYPE_UNKNOWN;
             break;
           default:
@@ -181,6 +187,7 @@ public class DefaultBitmapFramePreparer
         return false;
       }
       FLog.v(TAG, "Frame %d ready.", mFrameNumber);
+      FLog.v(TAG, "Frame %d frameType.", frameType);
       // Cache the frame
       synchronized (mPendingFrameDecodeJobs) {
         mBitmapFrameCache.onFramePrepared(mFrameNumber, bitmapReference, frameType);

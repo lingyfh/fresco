@@ -11,6 +11,7 @@ import android.net.Uri;
 import com.facebook.cache.common.CacheKey;
 import com.facebook.common.internal.Objects;
 import com.facebook.common.internal.VisibleForTesting;
+import com.facebook.common.logging.FLog;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.imagepipeline.cache.CountingMemoryCache;
 import com.facebook.imagepipeline.image.CloseableImage;
@@ -25,6 +26,8 @@ import javax.annotation.concurrent.GuardedBy;
  * <p> Each animated image should have its own instance of this class.
  */
 public class AnimatedFrameCache {
+
+  private static final Class<?> TAG = AnimatedFrameCache.class;
 
   @VisibleForTesting
   static class FrameKey implements CacheKey {
@@ -95,6 +98,7 @@ public class AnimatedFrameCache {
   }
 
   public synchronized void onReusabilityChange(CacheKey key, boolean isReusable) {
+    FLog.e(TAG, "onReusabilityChange cache key = " + key + " isReusable = " + isReusable);
     if (isReusable) {
       mFreeItemsPool.add(key);
     } else {
@@ -114,7 +118,8 @@ public class AnimatedFrameCache {
   public CloseableReference<CloseableImage> cache(
       int frameIndex,
       CloseableReference<CloseableImage> imageRef) {
-    return mBackingCache.cache(keyFor(frameIndex), imageRef, mEntryStateObserver);
+    CloseableReference<CloseableImage> ref = mBackingCache.cache(keyFor(frameIndex), imageRef, mEntryStateObserver);
+    return ref;
   }
 
   /**
@@ -169,6 +174,6 @@ public class AnimatedFrameCache {
   }
 
   private FrameKey keyFor(int frameIndex)   {
-    return new FrameKey(mImageCacheKey, frameIndex % 2);
+    return new FrameKey(mImageCacheKey, frameIndex);
   }
 }

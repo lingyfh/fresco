@@ -26,7 +26,7 @@ public class FixedNumberBitmapFramePreparationStrategy
   }
 
   public FixedNumberBitmapFramePreparationStrategy(int framesToPrepare) {
-    mFramesToPrepare = framesToPrepare;
+    mFramesToPrepare = 1;
   }
 
   @Override

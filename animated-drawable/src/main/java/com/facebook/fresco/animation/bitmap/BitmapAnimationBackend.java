@@ -195,6 +195,10 @@ public class BitmapAnimationBackend implements AnimationBackend,
           break;
 
         case FRAME_TYPE_REUSED:
+          if (true) {
+            nextFrameType = FRAME_TYPE_FALLBACK;
+            break;
+          }
           bitmapReference =
               mBitmapFrameCache.getBitmapToReuseForFrame(frameNumber, mBitmapWidth, mBitmapHeight);
           // Try to render the frame and draw on the canvas immediately after
@@ -204,6 +208,10 @@ public class BitmapAnimationBackend implements AnimationBackend,
           break;
 
         case FRAME_TYPE_CREATED:
+          if (true) {
+            nextFrameType = FRAME_TYPE_FALLBACK;
+            break;
+          }
           try {
             bitmapReference =
                 mPlatformBitmapFactory.createBitmap(mBitmapWidth, mBitmapHeight, mBitmapConfig);
@@ -217,6 +225,7 @@ public class BitmapAnimationBackend implements AnimationBackend,
           drawn = renderFrameInBitmap(frameNumber, bitmapReference) &&
               drawBitmapAndCache(frameNumber, bitmapReference, canvas, FRAME_TYPE_CREATED);
           nextFrameType = FRAME_TYPE_FALLBACK;
+          FLog.e(TAG, "createBitmap FRAME_TYPE_CREATED");
           break;
 
         case FRAME_TYPE_FALLBACK:

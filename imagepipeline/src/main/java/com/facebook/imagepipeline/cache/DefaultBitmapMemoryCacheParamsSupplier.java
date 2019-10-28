@@ -16,7 +16,7 @@ import com.facebook.common.util.ByteConstants;
  * Supplies {@link MemoryCacheParams} for the bitmap memory cache.
  */
 public class DefaultBitmapMemoryCacheParamsSupplier implements Supplier<MemoryCacheParams> {
-  private static final int MAX_CACHE_ENTRIES = 256;
+  private static final int MAX_CACHE_ENTRIES = 1256;
   private static final int MAX_EVICTION_QUEUE_SIZE = Integer.MAX_VALUE;
   private static final int MAX_EVICTION_QUEUE_ENTRIES = Integer.MAX_VALUE;
   private static final int MAX_CACHE_ENTRY_SIZE = Integer.MAX_VALUE;
@@ -50,7 +50,7 @@ public class DefaultBitmapMemoryCacheParamsSupplier implements Supplier<MemoryCa
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
         return 8 * ByteConstants.MB;
       } else {
-        return maxMemory / 4;
+        return maxMemory;
       }
     }
   }
